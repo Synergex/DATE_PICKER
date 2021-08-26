@@ -1,0 +1,165 @@
+;demo program for %date_picker function
+;
+; to build
+; dbr DEMO
+; dblink date_picker
+; dblink  DEMO date_picker WND:TKLIB.ELB
+;
+.include DBLDIR:WINDOWS.DEF
+.INCLUDE WND:TOOLS.DEF
+external function
+	date_picker	,a			; RETURNED VALUE FROM date_picker FUNCTION
+record
+	window_id	,i4
+	row		,d3
+	col		,d3
+	date_a		,2a10
+	date_num	,2d8
+	drow		,d2	,01
+PROC
+	open (15,o,'TT:')
+	; old style code demo
+	; ===================
+
+	display (15,$scr_pos(drow,1),'Program to demonstrate the use of "date_picker" function')
+	incr drow
+	display (15,$scr_pos(drow,1),'First two inputs are using old style DBL code using channel 15 as TT:')
+	incr drow
+	display (15,$scr_pos(drow,1),'Other inputs demonstrate functionality but use Toolkit style code')
+	incr drow
+	display (15,$scr_pos(drow,1),'All functionality is equally available in DBL and Toolkit style code')
+	incr drow
+	incr drow
+
+	display (15,$scr_pos(drow,1),'    DBL (MCBA) Style code Channel 15                      Function   Parameter 7')
+	incr drow
+	display (15,$scr_pos(drow,1),' 1. no parameters')
+	date_num =
+	date_a = %date_picker
+	display (15,$scr_pos(drow,45),'Date Returned ' + date_a + '  ' +%string(date_num,'ZZZZZZZZ-'))
+	incr drow
+	display (15,$scr_pos(drow,1),' 2. 20000210   10 Feb 2000 no Format')
+	date_num(2) =
+	date_a(2) = %date_picker (drow+2,,,,'20000210',' ',date_num(2)) 
+	display (15,$scr_pos(drow,45),'Date Returned ' + date_a(2) + '  ' +%string(date_num(2),'ZZZZZZZZ-'))
+	sleep 0.5
+	close 15
+
+	; Toolkit style code
+	; ==================
+	xcall u_start( ,,,,24,86)
+	xcall w_proc (wp_create,window_id,'MAIN',24,86)
+	xcall w_proc (wp_place,window_id,1,1)
+	xcall w_area (window_id,wa_color,2)
+	xcall w_disp (window_id,wd_color,2)
+	drow = 1
+	w_disp (window_id,wd_pos,drow,1,'DEMO date_picker FUNCTIONALITY')
+	w_disp (window_id,wd_pos,drow,50,'              String(A)   Number(D)')
+	incr drow
+	w_disp (window_id,wd_pos,drow,50,'              Returned    Returned',wd_updt)
+	incr drow
+	w_disp (window_id,wd_pos,drow,1,'    DBL (MCBA) Style code Channel 15                           Function   Parameter 7')
+	incr drow
+	w_disp (window_id,wd_pos,drow,1,' 1. no parameters')
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+	incr drow
+	w_disp (window_id,wd_pos,drow,1,' 2. 20000210   10 Feb 2000 no Format')
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a(2) + '  ' + %string(date_num(2),'ZZZZZZZZ-'),wd_updt)
+
+
+	incr drow
+	w_disp (window_id,wd_pos,drow,1,'    UI_Toolkit style code',wd_updt)
+
+	date_a = 'TIMEOUT'
+	while (date_a.eq.'TIMEOUT') begin
+		incr drow
+		date_num =
+		w_disp (window_id,wd_pos,drow,1,' 3. no parameters',wd_updt)
+		date_a = %date_picker 
+		w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+	end
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,' 4. 19000210   10 Feb 1900 no Format')
+	date_a = %date_picker (drow+2,,,,'19000210') 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,' 5. 20000210   10 Feb 2000 no Format')
+	date_a = %date_picker (drow+2,,,,'20000210') 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,' 6. 31/12/2019 31 Dec 2019 Format D/')
+	date_a = %date_picker (drow+2,,'D/',,'31/12/2019','D',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,' 7. 31/12/2019 31 Dec 2019 Format D-')
+	date_a = %date_picker (drow+2,,'D-',,'31-12-2019','D',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,' 8. 2019.12.31 31 Dec 2019 Format Y.')
+	date_a = %date_picker (drow+2,,'Y.',,'2019.12.31',,date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,' 9. 2019/12/31 31 Dec 2019 Format Y/')
+	date_a = %date_picker (drow+2,,'Y/',,'2019/12/31',,date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,'10. 12/31/2019 31 Dec 2019 Format M/')
+	date_a = %date_picker (4,,'M/',,'12/31/2019','M',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,'11. 12/31/2019 31 Dec 2019 Format M')
+	date_a = %date_picker (5,,'M',,'12/31/2019','M',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+	
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,'12. 12+31+2019 31 Dec 2019 Format M+')
+	date_a = %date_picker (6,,'M+',,'12+31+2019','M',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+	
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,'13. 26.01.2019 26 Jan 2019 Format D.')
+	date_a = %date_picker (7,,'D.',,'26.01.2019','D',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,'14. 26 01 2019 26 Jan 2019 Format D~')
+	date_a = %date_picker (8,,'D~',,'26 01 2019','D',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+	incr drow
+	w_disp (window_id,wd_pos,drow,10,'~ character has special meaning for formatting as a space character',wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,'15.  6/ 1/2019  6 Jan 2019 Format D/')
+	date_a = %date_picker (9,,'D/',,' 6/ 1/2019','D',date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	date_num =
+	w_disp (window_id,wd_pos,drow, 1,'16.  1.7.2019  7 Jan 2019 Format M.')
+	date_a = %date_picker (12,60,'M.',,' 1.7.2019',,date_num) 
+	w_disp (window_id,wd_pos,drow,50,'Date Returned ' + date_a + '  ' + %string(date_num,'ZZZZZZZZ-'),wd_updt)
+
+	incr drow
+	incr drow
+	w_disp (window_id,wd_pos,drow,10,'Press Enter to finish ',wd_reads,date_a,wd_updt)
+	stop
