@@ -9,3 +9,6 @@
 <hr>
 
 **Additional Information:** The function returns an Alpha field containing the date the user clicked on. ENTRY = %DATE_PICKER ([Row],[Col],[Region/Format],[Heading],[DefaultDate],[Region],[Value] This function will work for: â€¢ Traditional DBL style code open (15,o,â€™TT:â€™) â€¢ UI_Toolkit style code. xcall u_start â€¢ It does not rely on the Terminal being open or initiated. This function should build successfully for Synergy on Windows versions 8.0 onwards. To build and run, rename MAKE.TXT to be a batch file and execute. Then run demo.dbr. See "PICK_DATE.PDF" for full description, examples and usage.
+
+
+Make change
